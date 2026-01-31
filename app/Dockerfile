@@ -2,23 +2,25 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# requirements.txt is at repo root
+# Copy requirements first (better caching)
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# copy the Python package folder into the image as /app/app
-COPY app/ ./app/
+# Copy app code
+COPY . .
 
-# optional if you need uploads at runtime
+# Create uploads directory
 RUN mkdir -p uploads
 
-EXPOSE 8000
+# Render provides PORT automatically
+EXPOSE 10000
 
-# IMPORTANT: use Render's PORT if set
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# IMPORTANT: use module mode + $PORT
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port $PORT"]
