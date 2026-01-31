@@ -1,21 +1,13 @@
 FROM python:3.11-slim
-
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y gcc g++ && rm -rf /var/lib/apt/lists/*
 
-# copy requirements from backendadmin/app
-COPY backendadmin/app/requirements.txt .
+COPY app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# copy the actual app package
-COPY backendadmin/app ./app
-
+COPY app/ .
 RUN mkdir -p uploads
 
-EXPOSE 10000
-
-CMD ["sh", "-c", "python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT"]
+# Render sets PORT for you
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port $PORT"]
