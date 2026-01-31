@@ -10,7 +10,10 @@ pillow==10.1.0
 openai==1.3.0
 python-multipart==0.0.6
 
-# Email validation needed by Pydantic's email types
+# Uploads / async file handling
+aiofiles==23.2.1
+
+# Email validation needed by Pydantic EmailStr
 email-validator==2.1.1
 
 # Auth
