@@ -7,12 +7,12 @@ RUN apt-get update && apt-get install -y \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# requirements is inside app/
-COPY app/requirements.txt .
+# copy requirements from backendadmin/app
+COPY backendadmin/app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# copy the whole app package
-COPY app ./app
+# copy the actual app package
+COPY backendadmin/app ./app
 
 RUN mkdir -p uploads
 
