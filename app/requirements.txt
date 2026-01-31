@@ -1,27 +1,20 @@
 fastapi==0.104.1
 uvicorn==0.24.0
-
-# Environment & settings
 python-dotenv==1.0.0
+pandas==2.1.3
 pydantic==2.5.0
 pydantic-settings==2.1.0
-
-# Auth / JWT
-python-jose==3.3.0
-passlib[bcrypt]==1.7.4
-
-# File handling
-python-multipart==0.0.6
-pillow==10.1.0
 pypdf==3.17.0
 pymupdf==1.23.8
-
-# Data
-pandas==2.1.3
-numpy==1.26.2
-
-# AI
+pillow==10.1.0
 openai==1.3.0
+python-multipart==0.0.6
 
-# HTTP / utils
-httpx==0.25.2
+# Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.1.2
+
+# Mongo async client (fix: No module named 'motor')
+motor==3.3.2
+pymongo==4.6.1
