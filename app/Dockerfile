@@ -7,10 +7,13 @@ RUN apt-get update && apt-get install -y \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+# requirements is inside app/
+COPY app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# copy the whole app package
+COPY app ./app
+
 RUN mkdir -p uploads
 
 EXPOSE 10000
