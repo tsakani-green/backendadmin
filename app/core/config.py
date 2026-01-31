@@ -71,7 +71,7 @@ class Settings(BaseSettings):
     # JWT Authentication
     # -------------------------
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    SECRET_KEY: str = "your-secret-key-change-in-production"
+    SECRET_KEY: str = "__REPLACE_WITH_A_STRONG_SECRET_KEY__"
     ALGORITHM: str = "HS256"
     AUTH_ENABLED: bool = True
 
@@ -83,7 +83,11 @@ class Settings(BaseSettings):
     EMAIL_USERNAME: str = "__REPLACE_WITH_EMAIL_USERNAME__"
     EMAIL_PASSWORD: str = "__REPLACE_WITH_EMAIL_PASSWORD__"
     EMAIL_FROM: str = "noreply@example.com"
+<<<<<<< HEAD
     EMAIL_FROM_NAME: str = "YourCompany"
+=======
+    EMAIL_FROM_NAME: str = "YourCompany" 
+>>>>>>> dbca685 (Fix Docker/Render config)
     FRONTEND_URL: str = "http://localhost:5173"
 
     # -------------------------
