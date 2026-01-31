@@ -45,8 +45,8 @@ class Settings(BaseSettings):
     # Sunsynk API
     # -------------------------
     SUNSYNK_API_URL: str = "https://openapi.sunsynk.net"
-    SUNSYNK_API_KEY: str = "204013305"
-    SUNSYNK_API_SECRET: str = "zIQJeoPRXCjDV5anS5WIH7SQPAgdVaPm"
+    SUNSYNK_API_KEY: str = "__REPLACE_WITH_SUNSYNK_API_KEY__"
+    SUNSYNK_API_SECRET: str = "__REPLACE_WITH_SUNSYNK_API_SECRET__"
 
     # -------------------------
     # Mongo (support many historic names)
@@ -64,7 +64,7 @@ class Settings(BaseSettings):
     REDIS_URL: Optional[str] = None
 
     # ===== Gemini AI =====
-    GEMINI_API_KEY: str = "AIzaSyAfvt0OQDMbF0aJEr4qjH0bvBocQagQ2Rg"
+    GEMINI_API_KEY: str = "__REPLACE_WITH_YOUR_GEMINI_API_KEY__"
     GEMINI_MODEL_ESG: str = "gemini-1.5-flash"
 
     # -------------------------
@@ -80,10 +80,10 @@ class Settings(BaseSettings):
     # -------------------------
     EMAIL_HOST: str = "smtp.gmail.com"
     EMAIL_PORT: int = 587
-    EMAIL_USERNAME: str = "your-email@gmail.com"
-    EMAIL_PASSWORD: str = "your-app-password"
-    EMAIL_FROM: str = "noreply@africaesg.ai"
-    EMAIL_FROM_NAME: str = "AfricaESG.AI"
+    EMAIL_USERNAME: str = "__REPLACE_WITH_EMAIL_USERNAME__"
+    EMAIL_PASSWORD: str = "__REPLACE_WITH_EMAIL_PASSWORD__"
+    EMAIL_FROM: str = "noreply@example.com"
+    EMAIL_FROM_NAME: str = "YourCompany"
     FRONTEND_URL: str = "http://localhost:5173"
 
     # -------------------------
@@ -104,8 +104,8 @@ class Settings(BaseSettings):
     # eGauge
     # -------------------------
     EGAUGE_BASE_URL: str = "https://egauge65730.egaug.es/63C1A1"  # Added device path
-    EGAUGE_USERNAME: Optional[str] = "bertha"
-    EGAUGE_PASSWORD: Optional[str] = "bertha@house.2023"
+    EGAUGE_USERNAME: Optional[str] = "__REPLACE_WITH_EGAUGE_USERNAME__"
+    EGAUGE_PASSWORD: Optional[str] = "__REPLACE_WITH_EGAUGE_PASSWORD__"
     EGAUGE_POLL_INTERVAL_SECONDS: int = 60
     BERTHA_HOUSE_COST_PER_KWH: float = 2.00
 

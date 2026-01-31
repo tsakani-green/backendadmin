@@ -10,13 +10,13 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 async def test_all_possible_urls():
     """Test ALL possible eGauge URL patterns"""
     
-    # Your actual credentials from the debug output
-    username = "bertha"
-    password = "bertha@house.2023"
+    # WARNING: do NOT commit real credentials. Replace these placeholders locally.
+    username = "__REPLACE_WITH_EGAUGE_USERNAME__"
+    password = "__REPLACE_WITH_EGAUGE_PASSWORD__"
     auth = httpx.BasicAuth(username, password)
     
     print("="*80)
-    print(f"Testing with credentials: {username}:{password}")
+    print("Testing with placeholder credentials (do NOT commit real secrets)")
     print("="*80)
     
     # ALL possible URL patterns for eGauge
@@ -276,9 +276,9 @@ async def check_web_browser_access():
     print("   https://63C1A1.d.egaug.es")
     print("   https://egauge65730.egaug.es")
     
-    print("\n2. If prompted for authentication, use:")
-    print("   Username: bertha")
-    print("   Password: bertha@house.2023")
+    print("\n2. If prompted for authentication, use (placeholders):")
+    print("   Username: __REPLACE_WITH_EGAUGE_USERNAME__")
+    print("   Password: __REPLACE_WITH_EGAUGE_PASSWORD__")
     
     print("\n3. Look for:")
     print("   - eGauge logo or branding")
@@ -297,7 +297,7 @@ async def generate_curl_test_commands():
     print("TARGETED CURL COMMANDS TO RUN")
     print("="*80)
     
-    auth = "bertha:bertha@house.2023"
+    auth = "__REPLACE_WITH_EGAUGE_USERNAME__:__REPLACE_WITH_EGAUGE_PASSWORD__"
     
     commands = [
         # Most likely correct pattern

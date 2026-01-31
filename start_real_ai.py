@@ -25,24 +25,24 @@ SECRET_KEY=your-secret-key-here
 DEBUG=True
 
 # ===== Gemini =====
-GEMINI_API_KEY=AIzaSyAfvt0OQDMbF0aJEr4qjH0bvBocQagQ2Rg
+GEMINI_API_KEY=__REPLACE_WITH_YOUR_GEMINI_API_KEY__
 GEMINI_MODEL_ESG=gemini-1.5-flash
 """
         
         with open(env_path, 'w') as f:
             f.write(env_content)
         
-        print("✅ .env file created with your Gemini API key!")
+        print("✅ .env file created (please add GEMINI_API_KEY to .env)")
         return True
     
     # Check if Gemini API key is configured
     with open(env_path, 'r') as f:
         content = f.read()
-        if "GEMINI_API_KEY=" in content and "AIzaSy" in content:
-            print("✅ Gemini API key found in .env file!")
+        if "GEMINI_API_KEY=" in content and not content.strip().endswith("GEMINI_API_KEY="):
+            print("✅ GEMINI_API_KEY appears to be configured in .env file")
             return True
         else:
-            print("❌ Gemini API key not found in .env file!")
+            print("❌ GEMINI_API_KEY not found or is empty in .env file!")
             return False
 
 def install_dependencies():

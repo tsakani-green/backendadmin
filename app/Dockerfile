@@ -20,7 +20,8 @@ COPY . .
 # Create uploads directory
 RUN mkdir -p uploads
 
-EXPOSE 8002
+# Render provides PORT; expose is optional but fine to keep
+EXPOSE 8000
 
-# Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8002", "--reload"]
+# Run the application (bind to Render's PORT)
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

@@ -11,8 +11,9 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ConnectionFailure, OperationFailure
 
 # Database configurations
-LOCAL_MONGO_URL = "mongodb://localhost:27017/esg_dashboard"
-ATLAS_MONGO_URL = "mongodb+srv://esgAdmin:Tsakani3408@africaesg-cluster.36oy0su.mongodb.net/esg_dashboard?retryWrites=true&w=majority"
+import os
+LOCAL_MONGO_URL = os.getenv("LOCAL_MONGO_URL", "mongodb://localhost:27017/esg_dashboard")
+ATLAS_MONGO_URL = os.getenv("MONGODB_URL", "__REPLACE_WITH_YOUR_MONGODB_URL__")
 
 class MongoMigrator:
     def __init__(self):

@@ -1,0 +1,12 @@
+# Ignore local dev artifacts
+__pycache__/
+*.py[cod]
+venv/
+.env*
+node_modules/
+.esg-ai-env/
+.git/
+*.log
+uploads/
+.temp/
+.DS_Store
