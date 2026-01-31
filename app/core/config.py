@@ -1,4 +1,4 @@
-# backend/app/core/config.py
+﻿# backend/app/core/config.py
 
 from __future__ import annotations
 
@@ -83,18 +83,14 @@ class Settings(BaseSettings):
     EMAIL_USERNAME: str = "__REPLACE_WITH_EMAIL_USERNAME__"
     EMAIL_PASSWORD: str = "__REPLACE_WITH_EMAIL_PASSWORD__"
     EMAIL_FROM: str = "noreply@example.com"
-<<<<<<< HEAD
     EMAIL_FROM_NAME: str = "YourCompany"
-=======
-    EMAIL_FROM_NAME: str = "YourCompany" 
->>>>>>> dbca685 (Fix Docker/Render config)
     FRONTEND_URL: str = "http://localhost:5173"
 
     # -------------------------
     # Carbon Emissions Calculation
     # -------------------------
-    # Formula: tCO₂e = kWh × 0.93 ÷ 1000
-    # This means 0.93 kgCO₂e per kWh
+    # Formula: # Formula: tCO₂e = kWh × 0.93 ÷ 1000
+    # This means 0.93 # This means 0.93 kgCO₂e per kWh
     CARBON_FACTOR_KG_PER_KWH: float = 0.93
 
     # -------------------------
@@ -133,3 +129,7 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+
+
