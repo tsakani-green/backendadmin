@@ -1,0 +1,55 @@
+name: Render — trigger & monitor deploy (backendadmin)
+
+on:
+  workflow_dispatch:
+    inputs:
+      set_root_dir:
+        description: 'If true, PATCH the Render service to set rootDirectory to `app/`'
+        required: false
+        default: 'false'
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions: read-all
+
+jobs:
+  trigger-and-monitor:
+    name: Trigger & monitor Render deploy (backendadmin)
+    runs-on: ubuntu-latest
+    env:
+      RENDER_API_BASE: https://api.render.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Validate Render service settings
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+        run: |
+          python scripts/render/validate_render_settings.py
+
+      - name: Optionally set Root Directory to `app/` (manual)
+        if: ${{ github.event.inputs.set_root_dir == 'true' }}
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+        run: |
+          python scripts/render/patch_root_dir.py --rootDir app/
+
+      - name: Trigger Render deploy and wait (prints status)
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+        run: |
+          python scripts/render/trigger_and_watch.py --wait --timeout 900
