@@ -1,0 +1,5 @@
+# Compatibility shim for Render builds
+# Some Render service configurations run `pip install -r ../requirements.txt`
+# when the Root Directory is set to `app/`. This file ensures those builds
+# succeed by delegating to the canonical requirements file located in `app/`.
+-r app/requirements.txt

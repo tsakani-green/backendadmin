@@ -8,6 +8,9 @@ If your Render service is configured to use a subdirectory (recommended options)
 - Option A (preferred): set the service Root Directory to `app/` in Render and use the existing `app/Dockerfile`.
 - Option B: keep Root Directory = repo root — the top-level `Dockerfile` (added here) will build the app.
 
+Compatibility note: some Render configurations run `pip install -r ../requirements.txt` when Root Directory is `app/`.
+To make builds resilient regardless of Root Directory, this repository now includes a small compatibility shim at `backendadmin/requirements.txt` that delegates to `app/requirements.txt`.
+
 Required environment variables (set in Render → Service → Environment):
 - MONGODB_URL  (MongoDB Atlas connection string)
 - SECRET_KEY
