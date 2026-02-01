@@ -36,52 +36,52 @@ app = FastAPI(
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception):
     logger.exception(f"Unhandled exception on {request.method} {request.url}")
-    # Return JSON (so frontend can show detail instead of spinning forever)
     return JSONResponse(
         status_code=500,
         content={
             "detail": "Internal server error",
             "path": str(request.url.path),
             "method": request.method,
-            # only include error text when DEBUG to avoid leaking internals in prod
             "error": str(exc) if settings.DEBUG else None,
         },
     )
 
 # -------------------------------------------------------------------
-# CORS middleware (FIXED)
+# CORS middleware (Render/Vite safe)
 # -------------------------------------------------------------------
-def _build_cors_origins():
-    """
-    Build a safe allow_origins list.
-    Always includes localhost:3002 (your frontend),
-    and merges anything from settings.get_cors_origins() if present.
-    """
+def _build_cors_origins() -> list[str]:
     base = [
+        # Vite default dev
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        # Other dev ports you used
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
         "http://localhost:3002",
         "http://127.0.0.1:3002",
+        "http://localhost:3008",
+        "http://127.0.0.1:3008",
     ]
 
     extra = []
     try:
-        raw = settings.get_cors_origins()
-
-        # Normalize to list[str]
-        if isinstance(raw, str):
-            extra = [o.strip() for o in raw.split(",") if o.strip()]
-        elif isinstance(raw, (list, tuple)):
-            extra = [str(o).strip() for o in raw if str(o).strip()]
-        else:
-            extra = []
+        extra = settings.get_cors_origins()  # already list[str]
     except Exception as e:
-        logger.warning(f"Failed to load CORS origins from settings: {e}")
+        logger.warning(f"Failed to parse CORS_ORIGINS: {e}")
         extra = []
 
-    # Merge + dedupe while preserving order
-    merged = []
-    for o in base + extra:
-        if o not in merged:
-            merged.append(o)
+    # Always include FRONTEND_URL if set (Render static site)
+    if getattr(settings, "FRONTEND_URL", ""):
+        extra.append(settings.FRONTEND_URL.strip())
+
+    merged: list[str] = []
+    for origin in base + extra:
+        origin = (origin or "").strip()
+        if origin and origin not in merged:
+            merged.append(origin)
+
     return merged
 
 
@@ -116,7 +116,6 @@ scheduler = None
 
 
 def _dump_routes():
-    """Print all registered routes for debugging"""
     if not settings.DEBUG:
         return
 
@@ -131,10 +130,7 @@ def _dump_routes():
         name = getattr(route, "name", "")
 
         prefix = "/".join(path.split("/")[:3]) if len(path.split("/")) > 2 else "Other"
-        if prefix not in routes_by_prefix:
-            routes_by_prefix[prefix] = []
-
-        routes_by_prefix[prefix].append(f"{methods:15} {path:45} -> {name}")
+        routes_by_prefix.setdefault(prefix, []).append(f"{methods:15} {path:45} -> {name}")
 
     for prefix in sorted(routes_by_prefix.keys()):
         print(f"\n{prefix}:")
@@ -147,8 +143,9 @@ def _dump_routes():
 
 
 async def _run_startup_diagnostics():
-    """Run diagnostics on startup"""
     try:
+        if not settings.EGAUGE_BASE_URL:
+            return
         logger.info("Running eGauge connection diagnostics...")
         results = await diagnose_egauge_connection(settings.EGAUGE_BASE_URL)
 
@@ -157,58 +154,43 @@ async def _run_startup_diagnostics():
 
         logger.info(f"Diagnostic complete: {len(working)} working endpoints, {len(errors)} errors")
 
-        if working:
-            logger.info("Working endpoints:")
-            for result in working:
-                logger.info(f"  ✓ {result['url']} ({result.get('content_type', 'no type')})")
-
-        if errors:
-            logger.warning("Failed endpoints:")
-            for result in errors:
-                logger.warning(f"  ✗ {result['url']}: {result.get('error')}")
-
         if not working:
             logger.error("No working eGauge endpoints found! Check configuration.")
-
     except Exception as e:
         logger.error(f"Startup diagnostic failed: {e}")
 
 
 @app.on_event("startup")
 async def on_startup():
-    """Startup event handler"""
     global scheduler
 
     logger.info("Starting ESG Dashboard API...")
 
-    # Start eGauge scheduler
-    scheduler = start_egauge_scheduler()
-    logger.info("eGauge poller scheduler started")
+    # Start eGauge scheduler (safe)
+    try:
+        scheduler = start_egauge_scheduler()
+        logger.info("eGauge poller scheduler started")
+    except Exception as e:
+        logger.warning(f"eGauge scheduler not started: {e}")
 
-    # Run diagnostics
     if settings.DEBUG:
         await _run_startup_diagnostics()
-
-    # Dump routes for debugging
-    _dump_routes()
+        _dump_routes()
 
     logger.info(f"Application startup complete. Environment: {settings.ENVIRONMENT}")
 
 
 @app.on_event("shutdown")
 async def on_shutdown():
-    """Shutdown event handler"""
     global scheduler
     if scheduler:
         scheduler.shutdown(wait=False)
         logger.info("eGauge poller scheduler stopped")
-
     logger.info("Application shutdown complete")
 
 
 @app.get("/")
 async def root():
-    """Root endpoint"""
     return {
         "message": "ESG Dashboard API is running",
         "version": "1.0.0",
@@ -224,15 +206,12 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
     from app.services.egauge_poller import STATUS
 
-    # Check eGauge health
     egauge_health = "unknown"
     if STATUS.get("bertha-house"):
         egauge_health = STATUS["bertha-house"].get("health", "unknown")
 
-    # Check database connection
     db_status = "unknown"
     try:
         from app.core.database import db
